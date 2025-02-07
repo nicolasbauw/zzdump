@@ -7,9 +7,12 @@ pub fn main() !void {
     const allocator = fba.allocator();
 
     const timezone = try tzfile.Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris");
-    std.debug.print("Tz struct tzh_timecnt      : {any}\n", .{timezone.timecnt_data});
+    const last = getLastTT(timezone.timecnt_data);
+    const last_ttinfo = timezone.typecnt[timezone.timecnt_indices[last[1]]];
+    //std.debug.print("Tz struct                  : {any}\n", .{timezone});
     std.debug.print("Current timestamp          : {any}\n", .{std.time.timestamp()});
-    std.debug.print("Latest change timestamp    : {any}\n", .{getLastTT(timezone.timecnt_data)[0]});
+    std.debug.print("Latest change timestamp    : {any}\n", .{last[0]});
+    std.debug.print("Latest change ttinfo       : {any}\n", .{last_ttinfo});
 }
 
 fn getLastTT(timecnt: []const i64) struct { i64, usize } {
