@@ -1,34 +1,29 @@
 const std = @import("std");
 const tzfile = @import("tzfile");
 
-const lastest_tt = struct {
-    timestamp: i64,
-    index: usize,
-};
-
 pub fn main() !void {
     var buffer: [8192]u8 = undefined;
     var fba = std.heap.FixedBufferAllocator.init(&buffer);
     const allocator = fba.allocator();
 
     const timezone = try tzfile.Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris");
-    std.debug.print("Tz struct tzh_timecnt      : {any}\n", .{timezone.tzh_timecnt_data});
+    std.debug.print("Tz struct tzh_timecnt      : {any}\n", .{timezone.timecnt_data});
     std.debug.print("Current timestamp          : {any}\n", .{std.time.timestamp()});
-    std.debug.print("Latest change timestamp    : {any}\n", .{getLastTT(timezone.tzh_timecnt_data)});
+    std.debug.print("Latest change timestamp    : {any}\n", .{getLastTT(timezone.timecnt_data)[0]});
 }
 
-fn getLastTT(timecnt: []const i64) lastest_tt {
+fn getLastTT(timecnt: []const i64) struct { i64, usize } {
     const current = std.time.timestamp();
-    var latest = lastest_tt{ .timestamp = undefined, .index = undefined };
+    var latest_tt: struct { i64, usize } = .{ undefined, undefined };
 
     for (timecnt, 0..) |time, index| {
         if (time < current) {
-            latest.timestamp = time;
-            latest.index = index;
+            latest_tt[0] = time;
+            latest_tt[1] = index;
         }
     }
 
-    return latest;
+    return latest_tt;
 }
 
 //test "simple test" {
