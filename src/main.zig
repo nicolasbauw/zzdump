@@ -7,6 +7,8 @@ pub fn main() !void {
     const allocator = fba.allocator();
 
     const timezone = try tzfile.Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris");
+    defer timezone.close();
+
     const last = getLastTT(timezone.timecnt_data);
     const last_ttinfo = timezone.typecnt[timezone.timecnt_indices[last[1]]];
     //std.debug.print("Tz struct                  : {any}\n", .{timezone});
