@@ -11,9 +11,9 @@ pub fn main() !void {
     const timezone = try tzfile.Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris");
     defer timezone.close();
 
-    const last = getLastTT(timezone.timecnt_data);
-    const last_ttinfo = timezone.typecnt[timezone.timecnt_indices[last[1]]];
-    //std.debug.print("Tz struct                  : {any}\n", .{timezone});
+    const last = getLastTT(timezone.time_data);
+    const last_ttinfo = timezone.time_types[timezone.time_indices[last[1]]];
+
     std.debug.print("Current timestamp          : {any}\n", .{std.time.timestamp()});
     std.debug.print("Latest change timestamp    : {any}\n", .{last[0]});
     std.debug.print("Latest change ttinfo       : {any}\n", .{last_ttinfo});
