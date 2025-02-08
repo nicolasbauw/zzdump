@@ -11,9 +11,11 @@ pub fn main() !void {
     const timezone = try tzfile.Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris");
     defer timezone.close();
 
+    // Getting last timechange data
     const last = getLastTT(timezone.time_data);
     const last_ttinfo = timezone.time_types[timezone.time_indices[last[1]]];
 
+    // Getting abbreviation for this timetype
     const start_index = last_ttinfo.tt_desigidx;
     var end_index = start_index;
 
@@ -45,9 +47,9 @@ fn getLastTT(timecnt: []const i64) struct { i64, usize } {
     return latest_tt;
 }
 
-//test "simple test" {
-//    var list = std.ArrayList(i32).init(std.testing.allocator);
-//    defer list.deinit(); // try commenting this out and see if zig detects the memory leak!
-//    try list.append(42);
-//    try std.testing.expectEqual(@as(i32, 42), list.pop());
-//}
+test "get last timechange" {
+    const timezone = try tzfile.Tz.open(std.testing.allocator, "/usr/share/zoneinfo/America/Phoenix");
+    defer timezone.close();
+    const last = getLastTT(timezone.time_data);
+    try std.testing.expectEqual(last[0], @as(i64, -68659200));
+}
