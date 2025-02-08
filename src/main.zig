@@ -31,6 +31,8 @@ pub fn main() !void {
     std.debug.print("Latest change timestamp    : {any}\n", .{last[0]});
     std.debug.print("Latest change ttinfo       : {any}\n", .{last_ttinfo});
     std.debug.print("Latest change abbr         : {s}\n", .{timezone.tt_desig[start_index..end_index]});
+
+    std.process.cleanExit();
 }
 
 fn getLastTT(timecnt: []const i64) struct { i64, usize } {
