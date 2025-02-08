@@ -2,10 +2,10 @@ const std = @import("std");
 const tzfile = @import("tzfile");
 
 // 16K in the BSS segment for the Fixed Buffer Allocator
-var buffer: [16384]u8 = undefined;
+var bss: [16384]u8 = undefined;
 
 pub fn main() !void {
-    var fba = std.heap.FixedBufferAllocator.init(&buffer);
+    var fba = std.heap.FixedBufferAllocator.init(&bss);
     const allocator = fba.allocator();
 
     const timezone = try tzfile.Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris");
