@@ -14,9 +14,21 @@ pub fn main() !void {
     const last = getLastTT(timezone.time_data);
     const last_ttinfo = timezone.time_types[timezone.time_indices[last[1]]];
 
+    const start_index = last_ttinfo.tt_desigidx;
+    var end_index = start_index;
+
+    for (timezone.tt_desig[start_index..]) |c| {
+        if (c != 0) {
+            end_index += 1;
+        } else {
+            break;
+        }
+    }
+
     std.debug.print("Current timestamp          : {any}\n", .{std.time.timestamp()});
     std.debug.print("Latest change timestamp    : {any}\n", .{last[0]});
     std.debug.print("Latest change ttinfo       : {any}\n", .{last_ttinfo});
+    std.debug.print("Latest change abbr         : {s}\n", .{timezone.tt_desig[start_index..end_index]});
 }
 
 fn getLastTT(timecnt: []const i64) struct { i64, usize } {
