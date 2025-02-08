@@ -1,8 +1,10 @@
 const std = @import("std");
 const tzfile = @import("tzfile");
 
+// 16K in the BSS segment for the Fixed Buffer Allocator
+var buffer: [16384]u8 = undefined;
+
 pub fn main() !void {
-    var buffer: [8192]u8 = undefined;
     var fba = std.heap.FixedBufferAllocator.init(&buffer);
     const allocator = fba.allocator();
 
