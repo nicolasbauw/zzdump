@@ -8,8 +8,10 @@ pub fn main() void {
     var fba = std.heap.FixedBufferAllocator.init(&bss);
     const allocator = fba.allocator();
 
+    const stdout = std.io.getStdOut().writer();
+
     const timezone = tzfile.Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris") catch |err| {
-        std.debug.print("Cannot open file : {}\n", .{err});
+        stdout.print("Cannot open file : {}\n", .{err}) catch {};
         std.process.exit(1);
     };
     defer timezone.close();
