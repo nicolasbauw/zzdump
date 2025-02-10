@@ -4,11 +4,14 @@ const tzfile = @import("tzfile");
 // 16K in the BSS segment for the Fixed Buffer Allocator
 var bss: [16384]u8 = undefined;
 
-pub fn main() !void {
+pub fn main() void {
     var fba = std.heap.FixedBufferAllocator.init(&bss);
     const allocator = fba.allocator();
 
-    const timezone = try tzfile.Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris");
+    const timezone = tzfile.Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris") catch |err| {
+        std.debug.print("Cannot open file : {}\n", .{err});
+        std.process.exit(1);
+    };
     defer timezone.close();
 
     // Getting last timechange data
