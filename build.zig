@@ -16,12 +16,19 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     // load the "tzfile" dependency from build.zig.zon
-    const package = b.dependency("tzfile", .{
+    const tzfile = b.dependency("tzfile", .{
         .target = target,
         .optimize = optimize,
     });
     // load the "tzfile" module from the package
-    const module = package.module("tzfile");
+    const module = tzfile.module("tzfile");
+
+    const datetime = b.dependency("datetime", .{
+        .target = target,
+        .optimize = optimize,
+    });
+    // load the "tzfile" module from the package
+    const dt = datetime.module("datetime");
 
     const lib = b.addStaticLibrary(.{
         .name = "zzdump",
@@ -44,6 +51,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
     exe.root_module.addImport("tzfile", module);
+    exe.root_module.addImport("datetime", dt);
 
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
