@@ -1,5 +1,6 @@
 const std = @import("std");
 const tzfile = @import("tzfile");
+const DateTime = @import("datetime").DateTime;
 
 // 16K in the BSS segment for the Fixed Buffer Allocator
 var bss: [16384]u8 = undefined;
@@ -32,7 +33,11 @@ pub fn main() void {
         }
     }
 
-    std.debug.print("Current timestamp      : {any}\n", .{std.time.timestamp()});
+    const ts = std.time.milliTimestamp();
+    const dt = DateTime.fromMillis(ts);
+
+    std.debug.print("Current timestamp      : {any}\n", .{ts});
+    std.debug.print("Current date/time      : {any}\n", .{dt});
     std.debug.print("Last change timestamp  : {any}\n", .{last[0]});
     std.debug.print("Last change ttinfo     : {any}\n", .{last_ttinfo});
     std.debug.print("Last change abbr       : {s}\n", .{timezone.tt_desig[start_index..end_index]});
