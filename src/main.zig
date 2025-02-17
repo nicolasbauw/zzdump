@@ -1,5 +1,5 @@
 const std = @import("std");
-const tzfile = @import("tzfile");
+const Tz = @import("tzfile").Tz;
 const DateTime = @import("datetime").DateTime;
 
 // 16K in the BSS segment for the Fixed Buffer Allocator
@@ -11,7 +11,7 @@ pub fn main() void {
 
     const stdout = std.io.getStdOut().writer();
 
-    const timezone = tzfile.Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris") catch |err| {
+    const timezone = Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris") catch |err| {
         stdout.print("Cannot open file : {}\n", .{err}) catch {};
         std.process.exit(1);
     };
@@ -60,7 +60,7 @@ fn getPrevTT(timecnt: []const i64, ref_time: i64) struct { i64, usize } {
 }
 
 test "get last timechange" {
-    const timezone = try tzfile.Tz.open(std.testing.allocator, "/usr/share/zoneinfo/America/Phoenix");
+    const timezone = try Tz.open(std.testing.allocator, "/usr/share/zoneinfo/America/Phoenix");
     defer timezone.close();
     const last = getPrevTT(timezone.time_data);
     try std.testing.expectEqual(last[0], @as(i64, -68659200));
