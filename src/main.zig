@@ -52,7 +52,10 @@ pub fn main() void {
     std.debug.print("Current timestamp      : {any}\n", .{ts});
     std.debug.print("Current date/time      : {any}\n", .{dt});
     std.debug.print("Last change timestamp  : {any}\n", .{last[0]});
-    std.debug.print("Last change date/time  : {any}\n", .{DateTime.fromMillis(last[0] * 1000)});
+    // DateTime can't convert pre-epoch (negative) values
+    if (last[0] > 0) {
+        std.debug.print("Last change date/time  : {any}\n", .{DateTime.fromMillis(last[0] * 1000)});
+    }
     std.debug.print("Last change ttinfo     : {any}\n", .{last_ttinfo});
     std.debug.print("Last change abbr       : {s}\n", .{timezone.tt_desig[start_index..end_index]});
 
