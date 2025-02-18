@@ -7,11 +7,24 @@ var bss: [16384]u8 = undefined;
 
 pub fn main() void {
     var fba = std.heap.FixedBufferAllocator.init(&bss);
-    const allocator = fba.allocator();
+    var args = std.process.args();
+    var tz: []const u8 = undefined;
 
+    const allocator = fba.allocator();
     const stdout = std.io.getStdOut().writer();
 
-    const timezone = Tz.open(allocator, "/usr/share/zoneinfo/Europe/Paris") catch |err| {
+    // Skipping the command argument
+    _ = args.skip();
+
+    if (args.next()) |a| {
+        std.debug.print("Timezone               : {s}\n", .{a});
+        tz = a;
+    } else {
+        // No timezone specified
+        std.process.exit(0);
+    }
+
+    const timezone = Tz.open(allocator, tz) catch |err| {
         stdout.print("Cannot open file : {}\n", .{err}) catch {};
         std.process.exit(1);
     };
